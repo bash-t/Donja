@@ -1,4 +1,5 @@
-var fs = require( "fs" );
+var fs = require( 'fs' );
+var u = require( 'util' );
 
 /*
 * Variables
@@ -15,8 +16,8 @@ exports.init = init;
 * Functions
 */
 //checks the file system for daemons and fetches them in an array.
-function init( daemonPath ) { 
-   console.log( 'Starting DaemonHub...' )
+function init( daemonPath, callback ) { 
+   console.log( 'starting DaemonHub...' )
    fs.readdir( daemonPath, function( err, files ) { 
       if ( err ) {
          throw err;
@@ -38,25 +39,33 @@ function init( daemonPath ) {
                && ( currDaemon.isInterestedOn() || !currDaemon.isInterestedOn() ) ) { 
                //add it to the deamon list
                dList[ dName ] = currDaemon;
-               console.log( dName + ' initialized.' );
-   console.log(  '+++'             +  dList [ dName ]);
+               console.log( '  ' + dName + ' initialized.' );
             } else { 
                console.log( dName + ' does not export the expected set of functions. Ignoring the daemon.' );
             }
          }
       }
-      console.log( "DaemonHub started." );
-   } );
 
-   return this;
-   //return exports.process = processDaemons;
+      //check if at least one valid daemon is loaded
+      if( isEmpty( dList ) ) {
+         err = 'no daemon initialized.';
+      }
+
+      console.log( 'DaemonHub started.' );
+      callback( err );
+   } );
 }
 
 function processDaemons( doc, helperObj ) { 
-   console.log ( dList[ 'daemon1' ] );
    for( var i in dList ) {
-      console.log( "calling daemon: " + i );
+      console.log( 'calling daemon: ' + i + ' with document: ' + u.inspect( doc) );
       dList[ i ].handle( doc, helperObj );
    }
 };
 
+function isEmpty( obj ) { 
+   for( var i in obj ) {
+      return false;
+   }
+   return true;
+}

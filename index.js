@@ -1,15 +1,19 @@
-var daemonHub = require( './daemonHub' ).init('./daemons');
-//var cradle = require( 'cradle' );
-//var request = require( 'request' );
+var u = require( 'util' );
+var daemonHub = require( './daemonHub' );
 var http = require( 'http' );
 var conf = require( './config' );
 
+//cradle = require( 'cradle' );
+//request = require( 'request' );
 var handleWithObject = {
-//    db : db.connection,
+   //    db : db.connection,
 };
 
 //TODO: listen the changes feed and for every new doc call dRouter.process
-var doc = {  };
+var doc = { 
+   _id: 1234,
+   _rev: 4567
+};
 
 var subscribeChangesFeed = function( changesUrl, callback ) { 
    http.request( { host: 'admin:admin@localhost', port: 5984, path: 'dummydata/_changes?feed=continuous&include_docs=false&since=110', method: 'GET' }, function( err, resp, body ) {
@@ -29,4 +33,10 @@ console.log( 'subscribing changes feed...' );
 //      console.log( 'body: ' + body );
 //} );
 
-daemonHub.process( doc, handleWithObject );
+
+daemonHub.init( './daemons', function( err ) { 
+   if ( err ) {
+      throw err;
+   }
+   daemonHub.process( doc, handleWithObject );
+} )

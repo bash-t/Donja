@@ -2,7 +2,7 @@ exports.handle = handle;
 exports.isInterestedOn = isInterestedOn;
 
 function handle( doc, helperObj ) { 
-   console.log( "In daemon: daemon2");
+   console.log( "  in daemon: daemon2");
 }
 
 function isInterestedOn( doc ) { 
